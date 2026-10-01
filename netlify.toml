@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist/portfolio/browser"
+
+# Serve index.html for any path so the Angular app loads on direct visits/refreshes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
