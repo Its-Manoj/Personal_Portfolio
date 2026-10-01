@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-particle-bg',
@@ -7,32 +7,43 @@ import { Component, ElementRef, OnInit, OnDestroy, ViewChild, AfterViewInit } fr
   styles: [`
     #particle-canvas {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       z-index: -1;
+      opacity: 0.22;
       pointer-events: none;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParticleBgComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   private ctx!: CanvasRenderingContext2D;
   private particles: Particle[] = [];
-  private animationId!: number;
-
-  ngAfterViewInit() {
-    this.ctx = this.canvasRef.nativeElement.getContext('2d')!;
+  private animationId?: number;
+  private reducedMotion = false;
+  private readonly resizeListener = () => {
     this.resize();
     this.initParticles();
-    this.animate();
-    window.addEventListener('resize', () => this.resize());
+    this.draw();
+  };
+
+  ngAfterViewInit() {
+    const context = this.canvasRef.nativeElement.getContext('2d');
+    if (!context) return;
+    this.ctx = context;
+    this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.resize();
+    this.initParticles();
+    this.draw();
+    if (!this.reducedMotion) this.animate();
+    window.addEventListener('resize', this.resizeListener);
   }
 
   ngOnDestroy() {
-    cancelAnimationFrame(this.animationId);
-    window.removeEventListener('resize', () => this.resize());
+    if (this.animationId !== undefined) cancelAnimationFrame(this.animationId);
+    window.removeEventListener('resize', this.resizeListener);
   }
 
   private resize() {
@@ -42,38 +53,43 @@ export class ParticleBgComponent implements AfterViewInit, OnDestroy {
   }
 
   private initParticles() {
-    const count = 80;
+    this.particles = [];
+    const count = window.innerWidth < 700 ? 16 : 34;
     for (let i = 0; i < count; i++) {
-      this.particles.push(new Particle(this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height));
+      this.particles.push(new Particle(this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height, i));
     }
   }
 
   private animate() {
+    this.draw(true);
+    this.animationId = requestAnimationFrame(() => this.animate());
+  }
+
+  private draw(move = false) {
     const canvas = this.canvasRef.nativeElement;
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     this.particles.forEach((p, i) => {
-      p.update(canvas.width, canvas.height);
+      if (move) p.update(canvas.width, canvas.height);
       p.draw(this.ctx);
 
       for (let j = i + 1; j < this.particles.length; j++) {
         const p2 = this.particles[j];
         const dx = p.x - p2.x;
         const dy = p.y - p2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dist = Math.hypot(dx, dy);
 
-        if (dist < 150) {
+        if (dist < 118) {
           this.ctx.beginPath();
           this.ctx.moveTo(p.x, p.y);
           this.ctx.lineTo(p2.x, p2.y);
-          this.ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 150) * 0.1})`;
+          this.ctx.strokeStyle = `rgba(213, 243, 106, ${(1 - dist / 118) * 0.12})`;
           this.ctx.lineWidth = 0.5;
           this.ctx.stroke();
         }
       }
     });
 
-    this.animationId = requestAnimationFrame(() => this.animate());
   }
 }
 
@@ -86,14 +102,14 @@ class Particle {
   color: string;
   opacity: number;
 
-  constructor(width: number, height: number) {
-    this.x = Math.random() * width;
-    this.y = Math.random() * height;
-    this.vx = (Math.random() - 0.5) * 0.5;
-    this.vy = (Math.random() - 0.5) * 0.5;
-    this.radius = Math.random() * 2 + 1;
-    this.color = Math.random() > 0.5 ? '#00C0F9' : '#DC00FE';
-    this.opacity = Math.random() * 0.5;
+  constructor(width: number, height: number, index: number) {
+    this.x = ((index * 0.61803398875) % 1) * width;
+    this.y = ((index * 0.75487766625) % 1) * height;
+    this.vx = Math.sin(index * 1.73) * 0.25;
+    this.vy = Math.cos(index * 1.37) * 0.25;
+    this.radius = 0.6 + (index % 4) * 0.2;
+    this.color = index % 2 === 0 ? '#d5f36a' : '#ff8069';
+    this.opacity = 0.12 + (index % 4) * 0.05;
   }
 
   update(width: number, height: number) {
@@ -110,5 +126,6 @@ class Particle {
     ctx.fillStyle = this.color;
     ctx.globalAlpha = this.opacity;
     ctx.fill();
+    ctx.globalAlpha = 1;
   }
 }

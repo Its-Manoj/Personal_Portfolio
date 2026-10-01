@@ -1,26 +1,21 @@
-import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
   template: `
-    <nav [class.scrolled]="isScrolled">
+    <nav>
       <div class="container nav-content">
-        <a href="#" class="logo outfit glow-text">MANOJ.DEV</a>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#skills">Skills</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#contact">Contact</a></li>
+        <a href="#hero" class="logo outfit" aria-label="Manoj Kumar Pinniboyina, home">MK<span>.</span></a>
+        <ul id="primary-navigation" class="nav-links" [class.is-open]="isMenuOpen()">
+          <li><a href="#about" (click)="closeMenu()">Profile</a></li>
+          <li><a href="#projects" (click)="closeMenu()">Work</a></li>
+          <li><a href="#experience" (click)="closeMenu()">Experience</a></li>
+          <li><a href="#contact" (click)="closeMenu()">Contact</a></li>
         </ul>
-        <div class="nav-actions">
-           <button class="btn btn-outline theme-btn" (click)="toggleTheme()">
-            <i class="fa-solid" [class.fa-moon]="!isDarkMode" [class.fa-sun]="isDarkMode"></i>
-           </button>
-        </div>
+        <button class="menu-toggle" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()" aria-controls="primary-navigation" [attr.aria-label]="isMenuOpen() ? 'Close navigation menu' : 'Open navigation menu'">
+          <span></span><span></span>
+        </button>
       </div>
     </nav>
   `,
@@ -33,12 +28,9 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       z-index: 1000;
-      transition: var(--transition);
-    }
-    nav.scrolled {
-      background: rgba(13, 13, 13, 0.8);
+      background: rgba(17, 21, 18, 0.88);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--clr-line);
     }
     .nav-content {
       display: flex;
@@ -46,27 +38,26 @@ import { CommonModule } from '@angular/common';
       align-items: center;
       width: 100%;
     }
-    .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { color: var(--clr-text); transition: var(--transition); }
-    .nav-links a:hover { color: var(--clr-blue); }
-    .theme-btn { padding: 0.5rem 0.8rem; }
+    .logo { font-size: 1.35rem; font-weight: 700; color: var(--clr-text); }
+    .logo span { color: var(--clr-coral); }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: var(--clr-text-muted); font-size: 0.9rem; transition: color var(--transition); }
+    .nav-links a:hover { color: var(--clr-lime); }
+    .menu-toggle { display: none; width: 42px; height: 42px; padding: 10px; border: 1px solid var(--clr-line); border-radius: 4px; background: transparent; color: var(--clr-text); }
+    .menu-toggle span { display: block; height: 2px; margin: 5px 0; background: currentColor; transition: transform var(--transition); }
     @media (max-width: 768px) {
-      .nav-links { display: none; }
+      .nav-content { position: relative; }
+      .menu-toggle { display: block; }
+      .nav-links { display: none; position: absolute; top: calc(var(--nav-height) - 0.4rem); right: 0; left: 0; flex-direction: column; gap: 0; padding: 0.4rem 1rem; border: 1px solid var(--clr-line); background: var(--clr-surface); }
+      .nav-links.is-open { display: flex; }
+      .nav-links a { display: block; padding: 0.85rem 0; }
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent {
-  isScrolled = false;
-  isDarkMode = true;
+  isMenuOpen = signal(false);
 
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    this.isScrolled = window.scrollY > 50;
-  }
-
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    // Theme toggle logic can be expanded here
-  }
+  toggleMenu() { this.isMenuOpen.update((open) => !open); }
+  closeMenu() { this.isMenuOpen.set(false); }
 }

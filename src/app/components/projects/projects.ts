@@ -1,72 +1,78 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule],
   template: `
     <section id="projects">
       <div class="container">
-        <h2 class="section-title outfit glow-text">Featured Projects</h2>
+        <p class="eyebrow">Selected work</p>
+        <h2 class="section-title outfit">Real-Time Data Streaming & Workflow Platform</h2>
+        <p class="section-intro">High-throughput platform for distributed event processing, real-time alerting, and automated business workflows.</p>
         <div class="projects-container">
           @for (project of projects; track project.title) {
-            <div class="glass project-card">
+            <article class="project-card">
               <div class="project-content">
-                <h3 class="outfit">{{ project.title }}</h3>
+                <div class="project-heading">
+                  <p class="project-label">{{ project.type }}</p>
+                  <h3 class="outfit">{{ project.title }}</h3>
+                </div>
                 <p>{{ project.desc }}</p>
                 <div class="tech-stack">
                   @for (tech of project.tech; track tech) {
                     <span class="tech-tag">{{ tech }}</span>
                   }
                 </div>
-                <div class="project-links">
-                  <a [href]="project.link" class="btn-link">Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                  <a [href]="project.github" class="btn-link">GitHub <i class="fa-brands fa-github"></i></a>
-                </div>
               </div>
-            </div>
+              <div class="project-ownership">
+                <h4>Areas of contribution</h4>
+                <ul>
+                  @for (item of project.contributions; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            </article>
           }
         </div>
       </div>
     </section>
   `,
   styles: [`
-    .projects-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; }
-    .project-card { overflow: hidden; transition: var(--transition); }
-    .project-card:hover { transform: scale(1.02) translateY(-10px); border-color: var(--clr-purple); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
-    .project-content { padding: 2.5rem; }
-    .project-content h3 { font-size: 1.8rem; margin-bottom: 1rem; }
-    .project-content p { color: var(--clr-text-muted); margin-bottom: 1.5rem; }
-    .tech-stack { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2rem; }
-    .tech-tag { background: rgba(255, 255, 255, 0.05); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--glass-border); }
-    .project-links { display: flex; gap: 2rem; }
-    .btn-link { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 600; transition: var(--transition); }
-    .btn-link:hover { color: var(--clr-blue); }
-  `]
+    #projects { background: rgba(25, 30, 26, 0.5); border-top: 1px solid var(--clr-line); border-bottom: 1px solid var(--clr-line); }
+    .project-card { display: grid; grid-template-columns: 1.1fr 0.9fr; border: 1px solid var(--clr-line); background: var(--clr-surface); animation: reveal-up 650ms both; }
+    .project-content, .project-ownership { padding: clamp(1.3rem, 4vw, 2.5rem); }
+    .project-heading { margin-bottom: 1.3rem; }
+    .project-label { color: var(--clr-coral); text-transform: uppercase; font: 700 0.72rem 'Space Grotesk', sans-serif; margin-bottom: 0.55rem; }
+    .project-content h3 { font-size: clamp(1.45rem, 3vw, 2rem); }
+    .project-content > p { color: var(--clr-text-muted); margin-bottom: 1.6rem; }
+    .tech-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tech-tag { padding: 0.32rem 0.58rem; border-radius: 3px; font-size: 0.78rem; border: 1px solid var(--clr-line); color: var(--clr-text-muted); }
+    .project-ownership { border-left: 1px solid var(--clr-line); background: rgba(213, 243, 106, 0.025); }
+    .project-ownership h4 { color: var(--clr-lime); font-size: 0.9rem; margin-bottom: 1rem; }
+    .project-ownership ul { display: grid; gap: 0.9rem; list-style: none; }
+    .project-ownership li { position: relative; padding-left: 1rem; color: var(--clr-text-muted); font-size: 0.92rem; }
+    .project-ownership li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 5px; height: 5px; background: var(--clr-coral); }
+    @media (max-width: 720px) {
+      .project-card { grid-template-columns: 1fr; }
+      .project-ownership { border-left: 0; border-top: 1px solid var(--clr-line); }
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectsComponent {
   projects = [
     {
-      title: 'Weather Forecast App',
-      desc: 'A JavaFX-based desktop application that fetches real-time weather data via API. Features a dynamic UI that changes background colors and themes based on weather conditions — Sunny, Cloudy, Rain, and Snow.',
-      tech: ['Java', 'JavaFX', 'REST API', 'JSON'],
-      link: '#',
-      github: 'https://github.com/Its-Manoj/'
-    },
-    {
-      title: 'Employee Management System',
-      desc: 'A full-featured Java web application using Servlets, JDBC, and MySQL for complete CRUD operations — add, update, delete, and search employees. Deployed on Apache Tomcat with a clean MVC structure.',
-      tech: ['Java', 'Servlets', 'JDBC', 'MySQL', 'Tomcat'],
-      link: '#',
-      github: 'https://github.com/Its-Manoj/'
-    },
-    {
-      title: 'Facial Recognition Attendance System',
-      desc: 'An AI-powered automated attendance system built with Python and OpenCV. Uses facial recognition to identify and mark attendance, eliminating manual processes and improving accuracy and security.',
-      tech: ['Python', 'OpenCV', 'NumPy', 'Pandas', 'AI/ML'],
-      link: '#',
-      github: 'https://github.com/Its-Manoj/'
+      title: 'Distributed Event Processing & Workflow Engine',
+      type: 'Enterprise · Distributed Systems',
+      desc: 'An enterprise microservices platform designed to ingest high-frequency streaming data, validate payloads, and execute automated business logic and alerting in real time.',
+      tech: ['Java', 'Spring Boot', 'Apache Kafka', 'Redis', 'React', 'REST APIs'],
+      contributions: [
+        'High-Throughput Microservices: Developed scalable backend services using Java and Spring Boot to ingest, process, and route high-volume streaming events with minimal latency.',
+        'Data Ingestion & Pipeline Reliability: Engineered data validation and transformation pipelines to standardize multi-source inputs and ensure downstream data consistency.',
+        'Low-Latency In-Memory Computing: Integrated Redis caching mechanisms for fast geospatial lookups and state tracking across multi-tenant environments.',
+        'End-to-End Workflow Management: Built full-stack configuration interfaces in React and established end-to-end operational logging and audit monitoring.'
+      ]
     }
   ];
 }

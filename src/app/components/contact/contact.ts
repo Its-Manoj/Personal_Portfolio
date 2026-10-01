@@ -1,65 +1,42 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule],
   template: `
     <section id="contact">
       <div class="container">
-        <div class="glass contact-wrapper">
+        <div class="contact-wrapper">
           <div class="contact-info">
-            <h2 class="outfit glow-text">Get In Touch</h2>
-            <p>Have a project in mind or just want to say hi? Feel free to reach out!</p>
+            <p class="eyebrow">Contact</p>
+            <h2 class="outfit">Let’s build something useful.</h2>
+            <p>I’m happy to connect about Java, backend engineering, and IoT platform work.</p>
+            <a class="email-link" href="mailto:manojkumar.p9392@gmail.com" target="_blank" rel="noopener noreferrer">manojkumar.p9392@gmail.com <span aria-hidden="true">↗</span></a>
             <div class="social-links">
-              <a href="https://www.linkedin.com/in/manoj-kumar-pinniboyina/" target="_blank" class="social-icon"><i class="fa-brands fa-linkedin"></i></a>
-              <a href="https://github.com/Its-Manoj/" target="_blank" class="social-icon"><i class="fa-brands fa-github"></i></a>
-              <a href="mailto:manojyadhav9182@gmail.com" class="social-icon"><i class="fa-solid fa-envelope"></i></a>
+              <a href="https://www.linkedin.com/in/manoj-kumar-pinniboyina/" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn <span aria-hidden="true">↗</span></a>
+              <a href="https://github.com/Its-Manoj" target="_blank" rel="noopener noreferrer" class="social-link">GitHub <span aria-hidden="true">↗</span></a>
+              <a href="https://leetcode.com/u/manojkumarp9392/" target="_blank" rel="noopener noreferrer" class="social-link">LeetCode <span aria-hidden="true">↗</span></a>
+              <a href="https://www.hackerrank.com/profile/manojkumar_p9392" target="_blank" rel="noopener noreferrer" class="social-link">HackerRank <span aria-hidden="true">↗</span></a>
             </div>
           </div>
-          <form (submit)="sendEmail($event)" class="contact-form">
-            <div class="form-group">
-              <input type="text" name="name" placeholder="Your Name" required>
-            </div>
-            <div class="form-group">
-              <input type="email" name="email" placeholder="Your Email" required>
-            </div>
-            <div class="form-group">
-              <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-full">Send Message <i class="fa-solid fa-paper-plane"></i></button>
-          </form>
+          <a href="Manoj_Kumar.pdf" download="Manoj_Kumar.pdf" class="resume-link"><span>Resume</span><span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>
   `,
   styles: [`
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; padding: 4rem; }
-    .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
-    .form-group input, .form-group textarea {
-      width: 100%; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border);
-      padding: 1rem; border-radius: 12px; color: var(--clr-text); font-family: inherit; transition: var(--transition);
-    }
-    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--clr-blue); background: rgba(255, 255, 255, 0.05); }
-    .w-full { width: 100%; justify-content: center; }
-    .social-links { display: flex; gap: 1.5rem; margin-top: 2rem; }
-    .social-icon { font-size: 1.8rem; transition: var(--transition); }
-    .social-icon:hover { color: var(--clr-purple); transform: translateY(-5px); }
-    @media (max-width: 992px) { .contact-wrapper { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; } }
-  `]
+    #contact { border-top: 1px solid var(--clr-line); }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; padding: 2rem 0; }
+    .contact-info h2 { max-width: 520px; font-size: clamp(2rem, 4vw, 3.4rem); margin: 0.7rem 0; }
+    .contact-info > p:not(.eyebrow) { color: var(--clr-text-muted); }
+    .email-link { display: inline-block; margin-top: 1.3rem; color: var(--clr-lime); font-weight: 600; }
+    .email-link span, .social-link span { margin-left: 0.35rem; }
+    .social-links { display: flex; gap: 1.2rem; margin-top: 1.1rem; }
+    .social-link { color: var(--clr-text-muted); font-size: 0.9rem; }
+    .social-link:hover { color: var(--clr-coral); }
+    .resume-link { display: inline-flex; align-items: center; gap: 1.5rem; padding: 0.8rem 0; border-bottom: 1px solid var(--clr-lime); color: var(--clr-lime); font-family: 'Space Grotesk', sans-serif; }
+    @media (max-width: 620px) { .contact-wrapper { grid-template-columns: 1fr; align-items: start; } }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactComponent {
-  sendEmail(event: Event) {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const name = (form.querySelector('[name="name"]') as HTMLInputElement).value;
-    const email = (form.querySelector('[name="email"]') as HTMLInputElement).value;
-    const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement).value;
-
-    const subject = encodeURIComponent(`Portfolio Message from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-
-    window.location.href = `mailto:manojyadhav9182@gmail.com?subject=${subject}&body=${body}`;
-  }
-}
+export class ContactComponent {}

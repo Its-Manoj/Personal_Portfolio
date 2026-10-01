@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ParticleBgComponent } from './components/particle-bg/particle-bg';
 import { NavbarComponent } from './components/navbar/navbar';
 import { HeroComponent } from './components/hero/hero';
@@ -33,10 +33,6 @@ import { FooterComponent } from './components/footer/footer';
     </main>
     <app-footer></app-footer>
   `,
-  styles: [`
-    main {
-      padding-top: var(--nav-height);
-    }
-  `]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {}

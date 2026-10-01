@@ -1,27 +1,31 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-declare var Typed: any;
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgOptimizedImage],
   template: `
     <section id="hero" class="hero-section">
       <div class="container grid-two">
         <div class="hero-content">
-          <h2 class="outfit">Hi, I'm <span class="glow-text">Manoj</span></h2>
-          <h1>Java Full Stack Developer</h1>
-          <p class="hero-subtext">Building <span #typingElement></span></p>
+          <p class="eyebrow">Associate Software Engineer · Bengaluru, India</p>
+          <h1>Manoj Kumar <span class="glow-text">Pinniboyina</span></h1>
+          <h2>Software Engineer | Java · Spring Boot · Microservices · Full-Stack Development</h2>
+          <p class="hero-subtext">Hands-on experience building web applications and microservices with Java, Spring Boot, and REST APIs. I develop end-to-end features, integrate event messaging, and build responsive user interfaces.</p>
+          <p class="hero-stat"><strong>Enterprise</strong><span>Experience</span></p>
           <div class="hero-btns">
-            <a href="#projects" class="btn btn-primary">View Projects <i class="fa-solid fa-arrow-right"></i></a>
-            <a href="ManojKumar.pdf" download="Manoj_Kumar_Resume.pdf" class="btn btn-outline">Download Resume <i class="fa-solid fa-download"></i></a>
+            <a href="#projects" class="btn btn-primary">Explore my work <span aria-hidden="true">→</span></a>
+            <a href="Manoj_Kumar.pdf" download="Manoj_Kumar.pdf" class="btn btn-outline">Download resume <span aria-hidden="true">↓</span></a>
           </div>
+          <a class="hero-email" href="mailto:manojkumar.p9392@gmail.com" target="_blank" rel="noopener noreferrer">manojkumar.p9392@gmail.com</a>
         </div>
         <div class="hero-image">
-          <div class="image-wrapper glass">
-            <img src="profile.png" alt="Manoj Portfolio">
+          <div class="portrait-frame">
+            <div class="image-wrapper">
+              <img ngSrc="profile.png" width="1024" height="1024" priority alt="Portrait of Manoj Kumar Pinniboyina">
+            </div>
+            <div class="portrait-caption"><span class="status-dot"></span> Building &amp; Exploring Tech</div>
           </div>
         </div>
       </div>
@@ -30,77 +34,114 @@ declare var Typed: any;
   styles: [`
     .grid-two {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 4rem;
+      grid-template-columns: 1.15fr 0.75fr;
+      gap: clamp(2rem, 7vw, 6rem);
       align-items: center;
     }
     .hero-section {
-      min-height: 100vh;
+      min-height: min(900px, 100svh);
       display: flex;
       align-items: center;
-      padding-top: var(--nav-height);
+      padding-top: calc(var(--nav-height) + 3rem);
+      padding-bottom: 5rem;
+      overflow: hidden;
     }
     .hero-content h1 {
-      font-size: 4.5rem;
-      line-height: 1.1;
-      margin: 1rem 0;
-      font-weight: 800;
+      max-width: 760px;
+      font-size: clamp(3.15rem, 7vw, 6.2rem);
+      margin: 1rem 0 1.2rem;
+      font-weight: 600;
+      animation: reveal-up 650ms both;
+    }
+    .hero-content h2 {
+      max-width: 570px;
+      color: var(--clr-lime);
+      font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+      font-weight: 500;
+      margin-bottom: 1rem;
     }
     .hero-subtext {
-      font-size: 1.5rem;
+      max-width: 540px;
+      font-size: 1.05rem;
       color: var(--clr-text-muted);
-      margin-bottom: 2rem;
+      margin-bottom: 1.8rem;
     }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      margin: 0 0 1.5rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--clr-lime);
+    }
+    .hero-stat strong { color: var(--clr-lime); font: 600 1.25rem 'Space Grotesk', sans-serif; }
+    .hero-stat span { color: var(--clr-text-muted); font-size: 0.78rem; }
     .hero-btns {
       display: flex;
-      gap: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .hero-email {
+      display: inline-block;
+      margin-top: 1.4rem;
+      color: var(--clr-text-muted);
+      font-size: 0.9rem;
+      transition: color var(--transition);
+    }
+    .hero-email:hover { color: var(--clr-lime); }
+    .portrait-frame {
+      position: relative;
+      padding: 1.2rem 1.2rem 1rem;
+      border: 1px solid var(--clr-line);
+      background: var(--clr-surface);
+      animation: reveal-up 800ms 120ms both;
     }
     .image-wrapper {
-      position: relative;
-      padding: 10px;
-      border-radius: 30px;
-      animation: float 6s ease-in-out infinite;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      background: var(--clr-surface-raised);
     }
     .image-wrapper img {
-      border-radius: 20px;
+      display: block;
       width: 100%;
-      box-shadow: 0 0 30px rgba(0, 192, 249, 0.2);
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(0.84);
+      transition: transform 700ms ease, filter 700ms ease;
     }
-    .image-wrapper::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: var(--grad-primary);
-      border-radius: 32px;
-      z-index: -1;
-      opacity: 0.5;
+    .portrait-frame:hover img { transform: scale(1.025); filter: saturate(1); }
+    .portrait-caption {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: var(--clr-text-muted);
+      padding-top: 0.9rem;
+      font-size: 0.78rem;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--clr-lime);
+      box-shadow: 0 0 12px rgba(213, 243, 106, 0.5);
     }
     @media (max-width: 992px) {
-      .grid-two { grid-template-columns: 1fr; text-align: center; }
-      .hero-content { order: 2; }
-      .hero-image { order: 1; max-width: 400px; margin: 0 auto; }
-      .hero-btns { justify-content: center; }
-      .hero-content h1 { font-size: 3rem; }
+      .grid-two { grid-template-columns: 1fr 0.72fr; gap: 2rem; }
+      .hero-content h1 { font-size: clamp(2.8rem, 6vw, 4.3rem); }
     }
-  `]
+    @media (max-width: 720px) {
+      .grid-two { grid-template-columns: 1fr; }
+      .hero-section { min-height: auto; padding-top: calc(var(--nav-height) + 2.5rem); }
+      .hero-image { grid-row: 1; max-width: 300px; }
+      .hero-content h1 { font-size: clamp(2.7rem, 12vw, 4rem); }
+      .portrait-frame { padding: 0.8rem; }
+    }
+    @media (max-width: 420px) {
+      .hero-btns { align-items: stretch; flex-direction: column; }
+      .hero-btns .btn { justify-content: center; }
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeroComponent implements AfterViewInit {
-  @ViewChild('typingElement') typingRef!: ElementRef;
-
-  ngAfterViewInit() {
-    new Typed(this.typingRef.nativeElement, {
-      strings: [
-        'scalable Spring Boot APIs...',
-        'dynamic Angular applications...',
-        'AI & IoT-powered solutions...',
-        'full-stack Java systems...'
-      ],
-      typeSpeed: 50,
-      backSpeed: 30,
-      backDelay: 2000,
-      loop: true,
-      showCursor: true,
-      cursorChar: '|'
-    });
-  }
-}
+export class HeroComponent {}
